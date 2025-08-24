@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lekha Mitra Sim</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #FFFF00;
+            color: #000000;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+
+
+        .header {
+            background-color: #000000;
+            color: #FFFF00;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+
+
+        .header p {
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+
+
+        .main-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+            gap: 30px;
+        }
+
+
+
+        .sidebar {
+            width: 300px;
+            background-color: #000000;
+            color: #FFFF00;
+            padding: 20px;
+            border-radius: 15px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+
+
+        .sidebar h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+
+
+        .question-nav {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+
+
+        .question-nav-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #FFFF00;
+            background-color: transparent;
+            color: #FFFF00;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+
+
+        .question-nav-btn.attempted {
+            background-color: #00AA00;
+            border-color: #00AA00;
+            color: #FFFFFF;
+        }
+
+
+
+        .question-nav-btn.marked {
+            background-color: #FF6600;
+            border-color: #FF6600;
+            color: #FFFFFF;
+        }
+
+
+
+        .question-nav-btn.current {
+            background-color: #FFFF00;
+            color: #000000;
+        }
+
+
+
+        .legend {
+            margin-top: 20px;
+        }
+
+
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 4px;
+            border: 1px solid #FFFF00;
+        }
+
+
+
+        .legend-color.not-attempted { background-color: transparent; }
+        .legend-color.attempted { background-color: #00AA00; }
+        .legend-color.marked { background-color: #FF6600; }
+
+
+
+        .exam-area {
+            flex: 1;
+            background-color: #FFFFFF;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+
+
+        .rules-section {
+            background-color: #000000;
+            color: #FFFF00;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+
+
+        .rules-section h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+
+
+        .rules-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+
+
+        .rules-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+
+
+        .rules-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #FFFF00;
+            font-weight: bold;
+        }
+
+
+
+        .timer-section {
+            background-color: #000000;
+            color: #FFFF00;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+
+
+        .timer {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+
+
+        .question-timer {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #FF0000;
+        }
+
+
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+
+
+        .btn {
+            padding: 12px 25px;
+            border: 2px solid #000000;
+            background-color: #FFFF00;
+            color: #000000;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+
+
+        .btn:hover {
+            background-color: #000000;
+            color: #FFFF00;
+        }
+
+
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+
+
+        .btn-primary {
+            background-color: #000000;
+            color: #FFFF00;
+        }
+
+
+
+        .btn-primary:hover {
+            background-color: #FFFF00;
+            color: #000000;
+        }
+
+
+
+        .question-card {
+            background-color: #000000;
+            color: #FFFFFF;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+
+
+        .question-number {
+            background-color: #FFFF00;
+            color: #000000;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+
+
+        .question-type {
+            background-color: #FF6600;
+            color: #FFFFFF;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+
+
+        .option {
+            background-color: #333333;
+            color: #FFFFFF;
+            border: 2px solid transparent;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+
+
+        .option:hover {
+            border-color: #FFFF00;
+            background-color: #444444;
+        }
+
+
+
+        .option.selected {
+            border-color: #00AA00;
+            background-color: #004400;
+        }
+
+
+
+        .question-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+
+
+        .braille-section {
+            background-color: #333333;
+            border: 2px solid #FFFF00;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+
+
+        .braille-title {
+            color: #FFFF00;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+
+
+        .braille-display {
+            background-color: #000000;
+            border: 2px solid #FFFF00;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            line-height: 2;
+            color: #FFFF00;
+            min-height: 60px;
+        }
+
+
+
+        .voice-section {
+            background-color: #333333;
+            border: 2px solid #00AA00;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+
+
+        .voice-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+
+
+        .voice-status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+
+
+        .recording {
+            background-color: #FF0000;
+            color: #FFFFFF;
+            animation: pulse 1s infinite;
+        }
+
+
+
+        .not-recording {
+            background-color: #666666;
+            color: #CCCCCC;
+        }
+
+
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+
+
+        .hidden {
+            display: none;
+        }
+
+
+
+        .navigation-arrows {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+
+
+        .arrow-btn {
+            font-size: 2rem;
+            background-color: #000000;
+            color: #FFFF00;
+            border: 2px solid #FFFF00;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+
+
+        .arrow-btn:hover {
+            background-color: #FFFF00;
+            color: #000000;
+        }
+
+
+
+        .arrow-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: relative;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 200px;
+            }
+
+            .font-controls {
+                position: relative;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+
+
+        .answer-area {
+            margin-top: 20px;
+        }
+
+
+
+        #subjectiveAnswer {
+            width: 100%;
+            height: 150px;
+            background-color: #444444;
+            border: 1px solid #666666;
+            color: #FFFFFF;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+
+
+        .answer-area p {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #cccccc;
+            text-align: center;
+        }
+
+
+        /* Light Bulb Indicator */
+        .light-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #333333;
+            background-color: #666666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+
+        .light-indicator.on {
+            background-color: #FFFFFF;
+            border-color: #DDDDDD;
+            box-shadow: 0 0 20px #FFFFFF;
+            animation: bulb-glow 0.5s ease;
+        }
+
+
+        @keyframes bulb-glow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Font Size Slider Control */
+        .font-controls {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #FFFF00;
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 1001;
+            width: 200px;
+        }
+
+        .font-controls h4 {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .font-slider {
+            width: 100%;
+            height: 5px;
+            border-radius: 5px;
+            background: #333;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .font-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FFFF00;
+            cursor: pointer;
+        }
+
+        .font-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FFFF00;
+            cursor: pointer;
+            border: none;
+        }
+
+        .font-size-display {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Light Bulb Indicator -->
+    <div class="light-indicator" id="lightBulb">💡</div>
+    
+    <!-- Font Size Controls -->
+    <div class="font-controls">
+        <h4>Font Size</h4>
+        <input type="range" min="12" max="24" value="16" class="font-slider" id="fontSlider">
+        <div class="font-size-display" id="fontSizeDisplay">16px</div>
+    </div>
+    
+    <div class="header">
+        <h1>LEKHA MITRA</h1>
+        <p>Class 12 Chemistry Examination System</p>
+    </div>
+
+
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h3>Question Panel</h3>
+            <div class="question-nav" id="questionNav">
+                <!-- Question navigation buttons will be generated here -->
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color not-attempted"></div>
+                    <span>Not Attempted</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color attempted"></div>
+                    <span>Attempted</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color marked"></div>
+                    <span>Marked for Review</span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="exam-area">
+            <div class="rules-section" id="rulesSection">
+                <h3>Examination Instructions</h3>
+                <ul class="rules-list">
+                    <li>This is a 12-question Chemistry examination</li>
+                    <li>Total exam duration: 12 minutes (1 minute per question)</li>
+                    <li>Each question has a 1-minute timer</li>
+                    <li>You can move to next question by saying "next" or using navigation</li>
+                    <li>Questions can be marked for review</li>
+                    <li>Voice input is available for answers</li>
+                    <li>Braille display support is included</li>
+                    <li>You can navigate between questions using the question panel</li>
+                    <li>Submit your exam only when you are ready</li>
+                </ul>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="startExam()" id="startBtn">Start Chemistry Exam</button>
+                    <button class="btn" onclick="speakRules()" id="speakRulesBtn">Read Rules Aloud</button>
+                </div>
+            </div>
+
+
+
+            <div id="examContent" class="hidden">
+                <div class="timer-section">
+                    <div class="timer" id="examTimer">12:00</div>
+                    <div class="question-timer" id="questionTimer">01:00</div>
+                    <div class="controls">
+                        <button class="btn" onclick="speakCurrentQuestion()" id="speakBtn">Speak Question</button>
+                        <button class="btn" onclick="toggleBraille()" id="brailleBtn">Toggle Braille</button>
+                        <button class="btn" onclick="markForReview()" id="markBtn">Mark for Review</button>
+                    </div>
+                </div>
+
+
+
+                <div id="questionContainer">
+                    <!-- Questions will be displayed here -->
+                </div>
+
+
+
+                <div class="navigation-arrows">
+                    <button class="arrow-btn" onclick="previousQuestion()" id="prevBtn" disabled>←</button>
+                    <div class="controls">
+                        <button class="btn" onclick="nextQuestion()">Next Question</button>
+                        <button class="btn btn-primary" onclick="submitExam()" id="submitBtn">Submit Exam</button>
+                    </div>
+                    <button class="arrow-btn" onclick="nextQuestion()" id="nextBtn">→</button>
+                </div>
+
+
+
+                <div class="braille-section hidden" id="brailleSection">
+                    <div class="braille-title">Braille Display</div>
+                    <div class="braille-display" id="brailleDisplay">Select your answer</div>
+                </div>
+
+
+
+                <div class="voice-section">
+                    <div class="voice-controls">
+                        <button class="btn" onclick="startVoiceRecognition()" id="voiceBtn">Start Voice Input</button>
+                        <span class="voice-status not-recording" id="voiceStatus">Not Recording</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        let examStarted = false;
+        let totalTimeRemaining = 720; // 12 minutes
+        let questionTimeRemaining = 60; // 1 minute per question
+        let examTimerInterval;
+        let questionTimerInterval;
+        let currentQuestionIndex = 0;
+        let answers = {};
+        let questionStatus = {}; // 'attempted', 'marked', 'not-attempted'
+        let recognition;
+        let brailleVisible = false;
+
+
+
+        const questions = [
+            {
+                text: "Which of the following represents the electronic configuration of Chromium (Cr, Z=24)?",
+                options: [
+                    "A) [Ar] 3d4 4s2",
+                    "B) [Ar] 3d5 4s1", 
+                    "C) [Ar] 3d6 4s0",
+                    "D) [Ar] 3d3 4s3"
+                ],
+                correct: "B"
+            },
+            {
+                text: "What is the hybridization of carbon in methane (CH4)?",
+                options: [
+                    "A) sp",
+                    "B) sp2",
+                    "C) sp3",
+                    "D) sp3d"
+                ],
+                correct: "C"
+            },
+            {
+                text: "Which of the following is the strongest acid?",
+                options: [
+                    "A) HF",
+                    "B) HCl",
+                    "C) HBr", 
+                    "D) HI"
+                ],
+                correct: "D"
+            },
+            {
+                text: "The IUPAC name of CH3-CH(CH3)-CH2-COOH is:",
+                options: [
+                    "A) 2-methylbutanoic acid",
+                    "B) 3-methylbutanoic acid",
+                    "C) 2-methylpropanoic acid",
+                    "D) 3-methylpropanoic acid"
+                ],
+                correct: "B"
+            },
+            {
+                text: "Which type of isomerism is exhibited by [Co(NH3)4Cl2]+ complex?",
+                options: [
+                    "A) Optical isomerism",
+                    "B) Geometrical isomerism", 
+                    "C) Ionization isomerism",
+                    "D) Coordination isomerism"
+                ],
+                correct: "B"
+            },
+            {
+                text: "The oxidation state of Manganese in KMnO4 is:",
+                options: [
+                    "A) +5",
+                    "B) +6",
+                    "C) +7",
+                    "D) +8"
+                ],
+                correct: "C"
+            },
+            {
+                text: "Which of the following alcohols will give a positive iodoform test?",
+                options: [
+                    "A) Methanol",
+                    "B) Ethanol",
+                    "C) Propan-1-ol",
+                    "D) Butan-1-ol"
+                ],
+                correct: "B"
+            },
+            {
+                text: "The enzyme that catalyzes the conversion of glucose to ethanol is:",
+                options: [
+                    "A) Amylase",
+                    "B) Zymase",
+                    "C) Pepsin",
+                    "D) Trypsin"
+                ],
+                correct: "B"
+            },
+            {
+                text: "Which of the following has the highest melting point?",
+                options: [
+                    "A) NaCl",
+                    "B) MgO",
+                    "C) AlF3",
+                    "D) SiO2"
+                ],
+                correct: "B"
+            },
+            {
+                text: "The rate of reaction depends on:",
+                options: [
+                    "A) Concentration of reactants only",
+                    "B) Temperature only",
+                    "C) Presence of catalyst only",
+                    "D) All of the above"
+                ],
+                correct: "D"
+            },
+            {
+                text: "Which polymer is formed by condensation polymerization?",
+                options: [
+                    "A) Polyethylene",
+                    "B) Polystyrene",
+                    "C) Nylon-66",
+                    "D) Teflon"
+                ],
+                correct: "C"
+            },
+            {
+                text: "Explain the concept of standard electrode potential and what a value of -0.76V for Zn2+/Zn signifies about zinc's reactivity.",
+                type: 'subjective'
+            }
+        ];
+
+
+
+        const brailleMap = {
+            'a': '⠁', 'b': '⠃', 'c': '⠉', 'd': '⠙', 'e': '⠑', 'f': '⠋', 'g': '⠛', 'h': '⠓', 'i': '⠊', 'j': '⠚',
+            'k': '⠅', 'l': '⠇', 'm': '⠍', 'n': '⠝', 'o': '⠕', 'p': '⠏', 'q': '⠟', 'r': '⠗', 's': '⠎', 't': '⠞',
+            'u': '⠥', 'v': '⠧', 'w': '⠺', 'x': '⠭', 'y': '⠽', 'z': '⠵', ' ': '⠀', '.': '⠲', ',': '⠂'
+        };
+
+
+        // Light bulb functionality
+        function blinkLight() {
+            const lightBulb = document.getElementById('lightBulb');
+            lightBulb.classList.add('on');
+            
+            setTimeout(() => {
+                lightBulb.classList.remove('on');
+            }, 1000); // Light stays on for 1 second
+        }
+
+        // Font size slider functionality
+        function initializeFontSlider() {
+            const fontSlider = document.getElementById('fontSlider');
+            const fontSizeDisplay = document.getElementById('fontSizeDisplay');
+            
+            fontSlider.addEventListener('input', function() {
+                const fontSize = this.value;
+                document.body.style.fontSize = fontSize + 'px';
+                fontSizeDisplay.textContent = fontSize + 'px';
+                speak(`Font size changed to ${fontSize} pixels`);
+            });
+        }
+
+
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.error("Speech synthesis not supported in this browser.");
+                alert("Sorry, your browser does not support text-to-speech.");
+            }
+        }
+
+
+
+        function initializeExam() {
+            createQuestionNavigation();
+            for (let i = 0; i < questions.length; i++) {
+                questionStatus[i] = 'not-attempted';
+            }
+            updateQuestionNavigation();
+            initializeFontSlider(); // Initialize font slider
+        }
+
+
+
+        function createQuestionNavigation() {
+            const nav = document.getElementById('questionNav');
+            nav.innerHTML = '';
+            for (let i = 0; i < questions.length; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'question-nav-btn';
+                btn.textContent = i + 1;
+                btn.onclick = () => goToQuestion(i);
+                nav.appendChild(btn);
+            }
+        }
+
+
+
+        function updateQuestionNavigation() {
+            const buttons = document.querySelectorAll('.question-nav-btn');
+            buttons.forEach((btn, index) => {
+                btn.className = 'question-nav-btn';
+                if (index === currentQuestionIndex) {
+                    btn.classList.add('current');
+                } else if (questionStatus[index] === 'attempted') {
+                    btn.classList.add('attempted');
+                } else if (questionStatus[index] === 'marked') {
+                    btn.classList.add('marked');
+                }
+            });
+        }
+
+
+
+        function startExam() {
+            examStarted = true;
+            document.getElementById('rulesSection').classList.add('hidden');
+            document.getElementById('examContent').classList.remove('hidden');
+            
+            startTimers();
+            displayQuestion(0);
+            speak("Chemistry exam started. Question 1 is now displayed. You have 1 minute for each question.");
+        }
+
+
+
+        function startTimers() {
+            examTimerInterval = setInterval(() => {
+                totalTimeRemaining--;
+                updateExamTimerDisplay();
+                
+                if (totalTimeRemaining <= 0) {
+                    clearInterval(examTimerInterval);
+                    clearInterval(questionTimerInterval);
+                    submitExam();
+                }
+            }, 1000);
+
+
+
+            startQuestionTimer();
+        }
+
+
+
+        function startQuestionTimer() {
+            questionTimeRemaining = 60;
+            questionTimerInterval = setInterval(() => {
+                questionTimeRemaining--;
+                updateQuestionTimerDisplay();
+                
+                if (questionTimeRemaining <= 0) {
+                    clearInterval(questionTimerInterval);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+
+
+        function updateExamTimerDisplay() {
+            const minutes = Math.floor(totalTimeRemaining / 60);
+            const seconds = totalTimeRemaining % 60;
+            document.getElementById('examTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+
+
+        function updateQuestionTimerDisplay() {
+            const seconds = questionTimeRemaining;
+            document.getElementById('questionTimer').textContent = `00:${seconds.toString().padStart(2, '0')}`;
+        }
+
+
+
+        function displayQuestion(index) {
+            currentQuestionIndex = index;
+            const question = questions[index];
+            const container = document.getElementById('questionContainer');
+            
+            let questionHTML = '';
+            if (question.type === 'subjective') {
+                questionHTML = `
+                    <div class="question-card">
+                        <div class="question-header">
+                            <span class="question-number">Question ${index + 1}</span>
+                            <span class="question-type">Subjective Question</span>
+                        </div>
+                        <div class="question-text">${question.text}</div>
+                        <div class="answer-area">
+                            <textarea id="subjectiveAnswer" placeholder="Your answer will appear here after you speak..." readonly>${answers[index] || ''}</textarea>
+                            <p>Use the 'Start Voice Input' button below to answer this question.</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                questionHTML = `
+                    <div class="question-card">
+                        <div class="question-header">
+                            <span class="question-number">Question ${index + 1}</span>
+                            <span class="question-type">Multiple Choice</span>
+                        </div>
+                        <div class="question-text">${question.text}</div>
+                        <div class="options">
+                            ${question.options.map((option, optIndex) => {
+                                const optionLetter = String.fromCharCode(65 + optIndex);
+                                const isSelected = answers[index] === optionLetter;
+                                return `
+                                <div class="option ${isSelected ? 'selected' : ''}" onclick="selectOption('${optionLetter}')">
+                                    ${option}
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = questionHTML;
+            
+            updateNavigationButtons();
+            updateQuestionNavigation();
+        }
+
+
+
+        function selectOption(option) {
+            answers[currentQuestionIndex] = option;
+            questionStatus[currentQuestionIndex] = 'attempted';
+            
+            const optionElements = document.querySelectorAll('.option');
+            optionElements.forEach(el => el.classList.remove('selected'));
+            const optionIndex = option.charCodeAt(0) - 'A'.charCodeAt(0);
+            if (optionElements[optionIndex]) {
+                optionElements[optionIndex].classList.add('selected');
+            }
+            
+            updateQuestionNavigation();
+            updateBraille(`Option ${option} selected`);
+            speak(`Option ${option} selected`);
+            
+            // Blink the light bulb
+            blinkLight();
+        }
+
+
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                clearInterval(questionTimerInterval);
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+                startQuestionTimer();
+                speak(`Question ${currentQuestionIndex + 1}`);
+            }
+        }
+
+
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                clearInterval(questionTimerInterval);
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+                startQuestionTimer();
+                speak(`Question ${currentQuestionIndex + 1}`);
+            }
+        }
+
+
+
+        function goToQuestion(index) {
+            clearInterval(questionTimerInterval);
+            currentQuestionIndex = index;
+            displayQuestion(index);
+            startQuestionTimer();
+            speak(`Question ${index + 1}`);
+        }
+
+
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextBtn').disabled = currentQuestionIndex === questions.length - 1;
+        }
+
+
+
+        function markForReview() {
+            questionStatus[currentQuestionIndex] = 'marked';
+            updateQuestionNavigation();
+            speak("Question marked for review");
+        }
+
+
+
+        function speakRules() {
+            const rulesText = "Chemistry Examination Instructions. This is a 12-question Chemistry examination. Total exam duration is 12 minutes, 1 minute per question. Each question has a 1-minute timer. You can move to next question by saying next or using navigation. Questions can be marked for review. Voice input is available for answers. Braille display support is included. You can navigate between questions using the question panel. Submit your exam only when you are ready.";
+            speak(rulesText);
+        }
+
+
+
+        function speakCurrentQuestion() {
+            const question = questions[currentQuestionIndex];
+            let textToSpeak = `Question ${currentQuestionIndex + 1}. ${question.text}. Options: `;
+            question.options.forEach(option => {
+                textToSpeak += option + '. ';
+            });
+            speak(textToSpeak);
+        }
+
+
+
+        function toggleBraille() {
+            brailleVisible = !brailleVisible;
+            const brailleSection = document.getElementById('brailleSection');
+            
+            if (brailleVisible) {
+                brailleSection.classList.remove('hidden');
+                document.getElementById('brailleBtn').textContent = 'Hide Braille';
+                speak("Braille display enabled");
+            } else {
+                brailleSection.classList.add('hidden');
+                document.getElementById('brailleBtn').textContent = 'Show Braille';
+                speak("Braille display disabled");
+            }
+        }
+
+
+
+        function textToBraille(text) {
+            return text.toLowerCase().split('').map(char => brailleMap[char] || char).join('');
+        }
+
+
+
+        function updateBraille(text) {
+            if (brailleVisible) {
+                document.getElementById('brailleDisplay').textContent = textToBraille(text);
+            }
+        }
+
+
+
+        function startVoiceRecognition() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                speak("Voice recognition not supported in this browser");
+                return;
+            }
+
+
+
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+
+
+            recognition.onstart = function() {
+                document.getElementById('voiceStatus').textContent = 'Recording...';
+                document.getElementById('voiceStatus').className = 'voice-status recording';
+                document.getElementById('voiceBtn').textContent = 'Stop Recording';
+                document.getElementById('voiceBtn').onclick = stopVoiceRecognition;
+            };
+
+
+
+            recognition.onresult = function(event) {
+                // Handle subjective question differently
+                if (questions[currentQuestionIndex].type === 'subjective') {
+                    let fullTranscript = '';
+                    for (let i = 0; i < event.results.length; i++) {
+                        fullTranscript += event.results[i][0].transcript;
+                    }
+
+
+
+                    const subjectiveAnswerTextarea = document.getElementById('subjectiveAnswer');
+                    subjectiveAnswerTextarea.value = fullTranscript;
+
+
+
+                    // Save the final transcript when recognition ends or pauses
+                    if (event.results[event.results.length - 1].isFinal) {
+                        answers[currentQuestionIndex] = subjectiveAnswerTextarea.value;
+                        if (questionStatus[currentQuestionIndex] !== 'attempted') {
+                            questionStatus[currentQuestionIndex] = 'attempted';
+                            updateQuestionNavigation();
+                            updateBraille('Answer recorded.');
+                            speak('Answer recorded.');
+                        }
+                    }
+                    return; // Prevent command processing for subjective questions
+                }
+
+
+
+                // Command processing for MCQs
+                let finalTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript.toLowerCase().trim();
+                    }
+                }
+                
+                if (finalTranscript.includes('next')) {
+                    nextQuestion();
+                    stopVoiceRecognition();
+                } else if (finalTranscript.includes('previous')) {
+                    previousQuestion();
+                    stopVoiceRecognition();
+                } else if (finalTranscript.includes('option a') || finalTranscript.includes('answer a')) {
+                    selectOption('A');
+                    stopVoiceRecognition();
+                } else if (finalTranscript.includes('option b') || finalTranscript.includes('answer b')) {
+                    selectOption('B');
+                    stopVoiceRecognition();
+                } else if (finalTranscript.includes('option c') || finalTranscript.includes('answer c')) {
+                    selectOption('C');
+                    stopVoiceRecognition();
+                } else if (finalTranscript.includes('option d') || finalTranscript.includes('answer d')) {
+                    selectOption('D');
+                    stopVoiceRecognition();
+                } else if (finalTranscript.includes('mark for review')) {
+                    markForReview();
+                    stopVoiceRecognition();
+                } else if (finalTranscript.includes('speak question')) {
+                    speakCurrentQuestion();
+                    stopVoiceRecognition();
+                } else if (finalTranscript.includes('toggle braille')) {
+                    toggleBraille();
+                    stopVoiceRecognition();
+                } else if (finalTranscript.includes('submit exam')) {
+                    submitExam();
+                    stopVoiceRecognition();
+                }
+            };
+
+
+
+            recognition.onend = function() {
+                document.getElementById('voiceStatus').textContent = 'Not Recording';
+                document.getElementById('voiceStatus').className = 'voice-status not-recording';
+                document.getElementById('voiceBtn').textContent = 'Start Voice Input';
+                document.getElementById('voiceBtn').onclick = startVoiceRecognition;
+            };
+
+
+
+            recognition.start();
+        }
+
+
+
+        function stopVoiceRecognition() {
+            if (recognition) {
+                recognition.stop();
+            }
+        }
+
+
+
+        function submitExam() {
+            clearInterval(examTimerInterval);
+            clearInterval(questionTimerInterval);
+            examStarted = false;
+            if (recognition) {
+                recognition.stop();
+            }
+
+
+
+            const score = calculateScore();
+            const totalScorableQuestions = questions.filter(q => q.type !== 'subjective').length;
+            const resultMessage = `Exam submitted! You scored ${score} out of ${totalScorableQuestions} multiple choice questions.`;
+            const thankYouMessage = "Thank you for taking the exam!";
+
+
+
+            const examArea = document.querySelector('.exam-area');
+            examArea.innerHTML = `
+                <div class="rules-section" style="text-align: center; padding: 40px;">
+                    <h3>${thankYouMessage}</h3>
+                    <p style="font-size: 1.2rem; margin: 20px 0;">${resultMessage}</p>
+                    <p>Your subjective answer for question 12 has been recorded.</p>
+                    <div class="controls" style="margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="resetExam()">Take Exam Again</button>
+                    </div>
+                </div>
+            `;
+            speak(`${thankYouMessage} ${resultMessage}`);
+        }
+
+
+
+        function calculateScore() {
+            let score = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (questions[i].type !== 'subjective' && answers[i] === questions[i].correct) {
+                    score++;
+                }
+            }
+            return score;
+        }
+
+
+
+        function resetExam() {
+            window.location.reload();
+        }
+
+
+
+        // Initialize the exam when the page loads
+        window.onload = initializeExam;
+    </script>
+</body>
+</html>
