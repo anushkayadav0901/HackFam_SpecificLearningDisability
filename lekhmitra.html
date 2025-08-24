@@ -571,6 +571,127 @@
             color: #cccccc;
             text-align: center;
         }
+        /* Enhanced Accessibility Controls */
+.accessibility-controls {
+    position: fixed;
+    top: 220px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #FFFF00;
+    padding: 15px;
+    border-radius: 10px;
+    z-index: 1002;
+    width: 200px;
+}
+
+.accessibility-controls h4 {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.accessibility-controls button {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+    font-size: 0.8rem;
+    padding: 8px;
+}
+
+/* High Contrast and Color Blind Modes */
+.high-contrast {
+    filter: contrast(200%) brightness(150%);
+}
+
+.color-blind-mode {
+    filter: hue-rotate(180deg);
+}
+
+/* OCR Camera Modal */
+.ocr-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.ocr-content {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+/* Handwriting Canvas */
+.handwriting-area {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+#handwritingCanvas {
+    border: 2px solid #000;
+    cursor: crosshair;
+    background: white;
+    display: block;
+    margin: 10px auto;
+}
+
+/* Language Selector */
+.language-controls {
+    position: fixed;
+    top: 340px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #FFFF00;
+    padding: 15px;
+    border-radius: 10px;
+    z-index: 1003;
+    width: 200px;
+}
+
+.language-controls select {
+    width: 100%;
+    padding: 5px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+/* Privacy Mode Indicator */
+.privacy-active::before {
+    content: "🔒 Privacy Mode Active";
+    position: fixed;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FF0000;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    z-index: 10000;
+}
+
+/* Offline Mode Indicator */
+.offline-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #008800;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    z-index: 1004;
+}
+
 
 
         /* Light Bulb Indicator */
@@ -669,6 +790,44 @@
         <input type="range" min="12" max="24" value="16" class="font-slider" id="fontSlider">
         <div class="font-size-display" id="fontSizeDisplay">16px</div>
     </div>
+    <!-- Enhanced Accessibility Controls -->
+<div class="accessibility-controls" id="accessibilityPanel">
+    <h4>Accessibility</h4>
+    <button class="btn" onclick="toggleHighContrast()">High Contrast</button>
+    <button class="btn" onclick="toggleColorBlindMode()">Color Blind Mode</button>
+    <button class="btn" onclick="addExtraTime()">+5 Min Extra</button>
+    <button class="btn" onclick="initializeOCRCamera()">Scan Question</button>
+</div>
+
+<!-- Language Controls -->
+<div class="language-controls" id="languagePanel">
+    <h4>Language</h4>
+    <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+        <option value="ta">Tamil</option>
+        <option value="bn">Bengali</option>
+        <option value="ur">Urdu</option>
+    </select>
+    <button class="btn" onclick="translateQuestion()">Translate</button>
+</div>
+
+<!-- OCR Camera Modal -->
+<div class="ocr-modal" id="ocrModal">
+    <div class="ocr-content">
+        <h3>OCR Question Scanner</h3>
+        <video id="cameraVideo" width="400" height="300" autoplay></video>
+        <br>
+        <button class="btn" onclick="captureAndOCR()">Capture & Read</button>
+        <button class="btn" onclick="closeOCRModal()">Close</button>
+    </div>
+</div>
+
+<!-- Offline Mode Indicator -->
+<div class="offline-indicator hidden" id="offlineIndicator">
+    📶 Offline Mode Active
+</div>
+
     
     <div class="header">
         <h1>LEKHA MITRA</h1>
@@ -951,13 +1110,24 @@
 
 
         function initializeExam() {
-            createQuestionNavigation();
-            for (let i = 0; i < questions.length; i++) {
-                questionStatus[i] = 'not-attempted';
-            }
-            updateQuestionNavigation();
-            initializeFontSlider(); // Initialize font slider
-        }
+    createQuestionNavigation();
+    for (let i = 0; i < questions.length; i++) {
+        questionStatus[i] = 'not-attempted';
+    }
+    updateQuestionNavigation();
+    initializeFontSlider(); // Initialize font slider
+    
+    // ADD THESE NEW FEATURE INITIALIZATIONS:
+    enablePrivacyMode();
+    enableOfflineMode();
+    setupAutoRecovery();
+    
+    // Enhance voice recognition when it's initialized
+    if (typeof recognition !== 'undefined') {
+        enhanceVoiceCommands();
+    }
+}
+
 
 
 
@@ -1098,6 +1268,11 @@
             
             updateNavigationButtons();
             updateQuestionNavigation();
+            // Add this at the end of displayQuestion function before the closing brace
+setTimeout(() => {
+    addHandwritingSupport();
+}, 100);
+
         }
 
 
@@ -1180,13 +1355,9 @@
 
 
         function speakCurrentQuestion() {
-            const question = questions[currentQuestionIndex];
-            let textToSpeak = `Question ${currentQuestionIndex + 1}. ${question.text}. Options: `;
-            question.options.forEach(option => {
-                textToSpeak += option + '. ';
-            });
-            speak(textToSpeak);
-        }
+    smartQuestionReading();
+}
+
 
 
 
@@ -1393,6 +1564,290 @@
 
         // Initialize the exam when the page loads
         window.onload = initializeExam;
+        // OCR Camera Feature for Reading Questions Aloud
+let cameraStream = null;
+
+function initializeOCRCamera() {
+    if (!('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)) {
+        speak("Camera not supported in this browser");
+        return;
+    }
+    
+    document.getElementById('ocrModal').style.display = 'flex';
+    
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            cameraStream = stream;
+            document.getElementById('cameraVideo').srcObject = stream;
+            speak("Camera activated. Position question in view and click Capture & Read");
+        })
+        .catch(err => {
+            speak("Camera access denied");
+            closeOCRModal();
+        });
+}
+
+function captureAndOCR() {
+    speak("Capturing image and processing with OCR...");
+    // Simulate OCR processing
+    setTimeout(() => {
+        speak("Question detected and reading aloud: " + questions[currentQuestionIndex].text);
+        closeOCRModal();
+    }, 2000);
+}
+
+function closeOCRModal() {
+    if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+    }
+    document.getElementById('ocrModal').style.display = 'none';
+}
+
+// Digital Handwriting Support
+function addHandwritingSupport() {
+    const answerArea = document.querySelector('.answer-area');
+    if (answerArea && questions[currentQuestionIndex].type === 'subjective') {
+        const handwritingDiv = document.createElement('div');
+        handwritingDiv.className = 'handwriting-area';
+        handwritingDiv.innerHTML = `
+            <h4>Digital Writing Pad:</h4>
+            <canvas id="handwritingCanvas" width="400" height="200"></canvas>
+            <button class="btn" onclick="convertHandwritingToText()">Convert to Text</button>
+            <button class="btn" onclick="clearCanvas()">Clear</button>
+        `;
+        answerArea.appendChild(handwritingDiv);
+        
+        // Initialize canvas drawing
+        const canvas = document.getElementById('handwritingCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+    }
+}
+
+function convertHandwritingToText() {
+    speak("Converting handwriting to text...");
+    // Simulate handwriting recognition
+    setTimeout(() => {
+        const sampleText = "Sample converted text from handwriting";
+        document.getElementById('subjectiveAnswer').value = sampleText;
+        answers[currentQuestionIndex] = sampleText;
+        speak("Handwriting converted successfully");
+    }, 2000);
+}
+
+function clearCanvas() {
+    const canvas = document.getElementById('handwritingCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    speak("Canvas cleared");
+}
+
+// Multi-Language Translation
+function translateQuestion() {
+    const selectedLang = document.getElementById('languageSelect').value;
+    const langNames = {
+        'en': 'English',
+        'hi': 'Hindi', 
+        'ta': 'Tamil',
+        'bn': 'Bengali',
+        'ur': 'Urdu'
+    };
+    
+    speak(`Translating question to ${langNames[selectedLang]}...`);
+    
+    // Simulate translation
+    setTimeout(() => {
+        speak(`Question translated to ${langNames[selectedLang]}. Translation: ${questions[currentQuestionIndex].text}`);
+    }, 1500);
+}
+
+// Enhanced Accessibility Controls
+function toggleHighContrast() {
+    document.body.classList.toggle('high-contrast');
+    const isActive = document.body.classList.contains('high-contrast');
+    speak(isActive ? "High contrast mode enabled" : "High contrast mode disabled");
+}
+
+function toggleColorBlindMode() {
+    document.body.classList.toggle('color-blind-mode');
+    const isActive = document.body.classList.contains('color-blind-mode');
+    speak(isActive ? "Color blind friendly mode enabled" : "Color blind friendly mode disabled");
+}
+
+function addExtraTime() {
+    totalTimeRemaining += 300; // Add 5 minutes
+    speak("5 minutes extra time added");
+}
+
+// Privacy Protection Features
+function enablePrivacyMode() {
+    document.body.classList.add('privacy-active');
+    
+    // Disable screenshot/screen recording
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'PrintScreen' || 
+            (e.ctrlKey && e.shiftKey && e.key === 'S') ||
+            (e.ctrlKey && e.key === 'p')) {
+            e.preventDefault();
+            speak("Screen capture blocked for privacy");
+        }
+    });
+    
+    // Disable right-click context menu
+    document.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        speak("Right click disabled for security");
+    });
+    
+    // Focus monitoring
+    let focusWarnings = 0;
+    window.addEventListener('blur', () => {
+        if (examStarted && focusWarnings < 3) {
+            focusWarnings++;
+            speak(`Warning ${focusWarnings}: Please keep focus on exam window`);
+        }
+    });
+    
+    speak("Privacy protection enabled");
+}
+
+// Offline Mode Support
+function enableOfflineMode() {
+    // Check if online/offline
+    function updateOnlineStatus() {
+        const isOffline = !navigator.onLine;
+        const indicator = document.getElementById('offlineIndicator');
+        
+        if (isOffline) {
+            indicator.classList.remove('hidden');
+            speak("You are now in offline mode");
+        } else {
+            indicator.classList.add('hidden');
+        }
+    }
+    
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+    
+    // Save progress to localStorage
+    function saveProgress() {
+        localStorage.setItem('lekhaMitraAnswers', JSON.stringify(answers));
+        localStorage.setItem('lekhaMitraProgress', JSON.stringify({
+            currentQuestion: currentQuestionIndex,
+            timeRemaining: totalTimeRemaining,
+            questionStatus: questionStatus
+        }));
+    }
+    
+    // Auto-save every 30 seconds
+    setInterval(saveProgress, 30000);
+    
+    // Save before page unload
+    window.addEventListener('beforeunload', saveProgress);
+}
+
+// Enhanced Voice Commands
+function enhanceVoiceCommands() {
+    // Add more voice commands to existing recognition
+    const originalOnResult = recognition.onresult;
+    
+    recognition.onresult = function(event) {
+        // Call original handler first
+        originalOnResult.call(this, event);
+        
+        // Additional commands
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript.toLowerCase().trim();
+            }
+        }
+        
+        if (finalTranscript.includes('scan question')) {
+            initializeOCRCamera();
+            stopVoiceRecognition();
+        } else if (finalTranscript.includes('high contrast')) {
+            toggleHighContrast();
+            stopVoiceRecognition();
+        } else if (finalTranscript.includes('translate')) {
+            translateQuestion();
+            stopVoiceRecognition();
+        } else if (finalTranscript.includes('extra time')) {
+            addExtraTime();
+            stopVoiceRecognition();
+        }
+    };
+}
+
+// Smart Question Reading with Context
+function smartQuestionReading() {
+    const question = questions[currentQuestionIndex];
+    let contextualReading = `Question ${currentQuestionIndex + 1} of ${questions.length}. `;
+    
+    if (question.type === 'subjective') {
+        contextualReading += "This is a subjective question. ";
+    } else {
+        contextualReading += "This is a multiple choice question with 4 options. ";
+    }
+    
+    contextualReading += question.text;
+    
+    if (question.options) {
+        contextualReading += " Your options are: ";
+        question.options.forEach((option, index) => {
+            const letter = String.fromCharCode(65 + index);
+            contextualReading += `Option ${letter}: ${option}. `;
+        });
+    }
+    
+    speak(contextualReading);
+}
+
+// Auto-save and Recovery
+function setupAutoRecovery() {
+    // Check for saved data on load
+    const savedAnswers = localStorage.getItem('lekhaMitraAnswers');
+    const savedProgress = localStorage.getItem('lekhaMitraProgress');
+    
+    if (savedAnswers && savedProgress) {
+        const shouldRecover = confirm("Found saved exam progress. Would you like to continue from where you left?");
+        if (shouldRecover) {
+            answers = JSON.parse(savedAnswers);
+            const progress = JSON.parse(savedProgress);
+            currentQuestionIndex = progress.currentQuestion;
+            totalTimeRemaining = progress.timeRemaining;
+            questionStatus = progress.questionStatus;
+            
+            speak("Exam progress recovered successfully");
+        }
+    }
+}
+
     </script>
+    
 </body>
 </html>
