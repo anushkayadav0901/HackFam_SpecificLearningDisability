@@ -1,4 +1,6 @@
 # Ultra-Quiet Multi-Sensory Modular Writing Pen & Pad
+# idea showcase via blender model- 
+https://drive.google.com/file/d/1z_LNydjxVFua904TJ7XG2d8uU6XYhVxo/view?usp=sharing
 
 ## Problem Statement
 Developing an ultra-quiet, multi-sensory, modular writing pen & pad system for children with Specific Learning Disability (SLD) that enables full independence during high-stakes exams, without disturbing other candidates.
